@@ -163,7 +163,63 @@ echo "Coundown down from 10 to 1 :"
 for i in countdown(10..1):
   echo i
 
-# カウントアップ関数をいっつも使うのはだるいので、短く済ませれるイテレータがある
+# カウントアップ関数をいつも使うのはだるいので、短く済ませれるイテレータがある
 # <数値>..<数値>である
 for i in 1..10 :
   echo i
+
+# `<数値> <= x < <数値>`のように数値を含めたくない場合は
+# ^または<を使用することで実現することができる
+for i in 1..<10:
+  echo i
+
+var s = "some string"
+for i in 0..^s.len :
+  echo i
+
+# 他にイテレータとして便利なコレクション（配列やシーケンスのようなやつ）の関数
+# items ：指定された配列の要素を提供する関数（可変）
+# mitems：指定された配列の要素を提供する関数（不変）
+
+# pairs  ：配列のインデックスやインデックス番号を提供する関数（可変）
+# mpairs ：配列のインデックスやインデックス番号を提供する関数（不変）
+for index, items in ["a", "b"].pairs:
+  echo items, "at index ", index
+
+#-----------------------------------------------------------------------------------------
+# ブロックとスコープ
+# スコープ：有効範囲
+# ブロック：インデントされているところ
+# ローカル変数のような概念のこと
+
+# forやwhileといったループは、自動敵にスコープやブロックが有効となっています
+while false:
+  var x = "hi"
+echo x # error
+
+# block宣言をすることにより明示的にブロックを宣言することができる
+block myblock:  # myblockは任意
+  var x = "hi"
+echo x # error
+
+#-----------------------------------------------------------------------------------------
+# break宣言
+# whileやforループをする際にblock宣言を応用することで
+# goto文のような処理をすることができる（goto文程自由ではないが…）
+block myblock:
+  echo "entering block"
+  while true:
+    echo "looping"
+    break # block内でのブレイクではない
+  echo "still in block"
+
+block myblock2:
+  echo "entering block"
+  while true:
+    echo "looping"
+    break myblock2 # これはblock内へとbreakする
+
+#-----------------------------------------------------------------------------------------
+# コンテニュー宣言
+# 他のプログラミング言語のように、
+  
