@@ -320,4 +320,81 @@ proc yes(questions: string): bool =
 #reult変数はシャドーイングされます。
 #（既存の変数へそのスコープ内でアクセスできなくすること、イミュータブルプログラミング等で使用される）
 
+# 参照データ型の際はプロシージャ開始時の初期値がnilになっているので手動で初期化する必要がある。
 
+#---------------------------------------------------------------------------------------------------
+# パラメータ
+
+#[ パラメータはproc test(arg1: int) =
+                          ↑これがパラメータ
+    引数はtest(1)
+               ↑これが引数
+  パラメータは駐車場で、引数が車のイメージ
+  参考
+  https://docs.microsoft.com/ja-jp/previous-versions/visualstudio/visual-studio-2008/9kewt1b3(v=vs.90)?redirectedfrom=MSDN
+]#
+
+# 通常、プロシージャでのパラメータは不変です。
+# だが、プロシージャ内部で変数にする必要がある場合、する方法がある
+# プロシージャ内部でvarをもちいて引数のシャドウイングをする方法である
+
+proc printSeq(s: seq, nprinted: int = -1) =   # 引数のnprinted
+  # 変数キーワードを使用しシャドウイング
+  var nprinted = if nprinted == -1 : s.len else: min(nprinted, s.len)
+  for i in 0 .. <nprinted:
+    echo s[i] 
+
+# どういう場面でこの機能を使うかというと
+# プロシージャで、引数を修正したい場合に使用する
+
+# ;でvarで宣言している部分とa,b(おそらくlet?で暗黙定義)と分けている
+proc divmod(a, b : int ; res, rmainder: var int) =
+  res = a div b
+  remainder = a mod b
+
+var
+  x, y : int
+
+# 推奨はされないが、divmod 8, 5, x, yでも動く
+divmod(8, 5, x, y)
+echo x
+echo y
+
+# var引数は、プロシージャによって変更でき呼び出し元（引数）に反映される
+# 上の例では、varパラメータの変わりにタプルを使うのが適切
+
+#---------------------------------------------------------------------------------
+# Discard文
+# プロシージャからの戻り値を無視する方法としてdiscord文を使用する方法がある
+
+discard yes("May I ask a pointless question?")
+
+# プロシージャ自体にdiscardaleプラグマで宣言している場合
+# 暗黙的に戻り値を無視させることができる
+
+proc p(x, y: int) {.discardable} =
+  return x + y
+
+p(3, 4)
+
+# またdiscard文を使用してコメント文を書くことはできるが
+# コメントの紹介から除外されているので、非推奨なのかも
+
+#---------------------------------------------------------------------------------
+# 名前付き引数
+# プロシージャの引数は複数あり複雑なのが一般的である
+# また、パラメータの順序も明確でない場合がある
+# （要はパラメータの一つが何番目に何があるかわからなくね？ってこと）
+# その解決法として、名前付き引数がある
+
+# 機能としては、引数を名前付きで渡すことで
+# パラメータの宣言された順番を気にしなくて良くなる
+
+# また、複雑なデータ型のプロシージャに使われるが
+# どの引数がどのパラメータに属するかが明確となる
+proc createWindow(x, y, width, height: int; title: string; show: bool) =
+  ...
+
+var w = createWindow(show = true, title = "My Application", x = 0, y = 0, height = 600, width = 800)
+
+# 
