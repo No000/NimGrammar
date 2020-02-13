@@ -23,7 +23,6 @@ echo "Hi", name, '!'
 
 # 引数の指定
 # nim c -r filename.nim arg1 arg2
-
 # リリースバージョンをコンパイルする方法
 # nim c -d:release filename.nim
 # このオプションによりランタイムチェックがオフとなり、最適化オプションがONとなる
